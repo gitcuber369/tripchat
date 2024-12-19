@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "622744975233",
+    "project_id": "sologo-cc63a",
+    "storage_bucket": "sologo-cc63a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622744975233:android:37d9acb14f14acc7845a80",
+        "android_client_info": {
+          "package_name": "com.beerbal.Sologo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFK4TEMzdD0rHEExQyO4L2mCdEuPLFUgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
