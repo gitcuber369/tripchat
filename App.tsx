@@ -23,6 +23,7 @@ GoogleSignin.configure({
   scopes: ["https://www.googleapis.com/auth/drive"],
   webClientId:
     "1082163378951-9bu7ms996q4j0g49qs42fkb8a7gjci9e.apps.googleusercontent.com",
+  // "1082163378951-u7fjc8efrgsn14f05llpamoj4tkbo4hf.apps.googleusercontent.com",
   // iosClientId: 'iosClientId for iOS, nothing special here',
   offlineAccess: true,
   forceCodeForRefreshToken: true,
