@@ -32,9 +32,7 @@ import { UserContext } from "../../context";
 import { usePushNotifications } from "../../context/usePushNotifications";
 import { EvilIcons } from "@expo/vector-icons";
 
-type Props = {
-  navigation: NativeStackScreenProps<RootStackParamList, "Login">;
-};
+type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function Login({ navigation }: Props) {
   const toast = useToast();
@@ -98,66 +96,70 @@ export default function Login({ navigation }: Props) {
 
       // Perform Google Sign-In
       const response = await GoogleSignin.signIn();
+      console.log({ response });
+
       if (response) {
-        const { idToken } = response?.data; // Extract ID Token from response
+        const { idToken } = response; // Extract ID Token from response
 
         // Authenticate with Supabase
-        const { data: sessionData, error: authError } =
-          await supabase.auth.signInWithIdToken({
-            provider: "google",
-            token: idToken,
-          });
-
-        if (authError) {
-          throw authError;
-        }
-
-        const userId = sessionData.user.id; // Get the authenticated user's ID
-        console.log("===========sessionData>>>>>s", sessionData);
-
-        // Check if user already exists in the `users` table
-        const { data: existingUser, error: fetchError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", userId)
-          .single();
-
-        if (fetchError) {
-          console.log("======fetchError>>>>>", fetchError);
-          if (fetchError.code === "PGRST116") {
-            // User does not exist; insert user data into Supabase
-            const { email, full_name, picture } =
-              sessionData.user.user_metadata; // Extract additional user data
-            const { error: insertError } = await supabase.from("users").insert({
-              id: userId,
-              email,
-              username: full_name,
-              profile_pic: [picture],
-              expoPushToken: expoPushToken?.data,
+        if (idToken) {
+          const { data: sessionData, error: authError } =
+            await supabase.auth.signInWithIdToken({
+              provider: "google",
+              token: idToken,
             });
-
-            if (insertError) {
-              throw insertError;
-            }
-            setModalVisible(true);
-            setUserData({
-              id: userId,
-              email,
-              username: full_name,
-              profile_pic: [picture],
-              role: "",
-              description: null,
-              expoPushToken: expoPushToken?.data,
-            });
-          } else {
-            throw fetchError;
+          if (authError) {
+            throw authError;
           }
-        } else {
-          console.log("User already exists:", existingUser);
-          setUser(existingUser);
-        }
 
-        console.log("Google Login Successful:", sessionData);
+          const userId = sessionData.user.id; // Get the authenticated user's ID
+          console.log("===========sessionData>>>>>s", sessionData);
+
+          // Check if user already exists in the `users` table
+          const { data: existingUser, error: fetchError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", userId)
+            .single();
+
+          if (fetchError) {
+            console.log("======fetchError>>>>>", fetchError);
+            if (fetchError.code === "PGRST116") {
+              // User does not exist; insert user data into Supabase
+              const { email, full_name, picture } =
+                sessionData.user.user_metadata; // Extract additional user data
+              const { error: insertError } = await supabase
+                .from("users")
+                .insert({
+                  id: userId,
+                  email,
+                  username: full_name,
+                  profile_pic: [picture],
+                  expoPushToken: expoPushToken?.data,
+                });
+
+              if (insertError) {
+                throw insertError;
+              }
+              setModalVisible(true);
+              setUserData({
+                id: userId,
+                email,
+                username: full_name,
+                profile_pic: [picture],
+                role: "",
+                description: null,
+                expoPushToken: expoPushToken?.data,
+              });
+            } else {
+              throw fetchError;
+            }
+          } else {
+            console.log("User already exists:", existingUser);
+            setUser(existingUser);
+          }
+          console.log("Google Login Successful:", sessionData);
+        }
       } else {
         console.log("Sign-in was cancelled by the user");
       }

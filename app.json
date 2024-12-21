@@ -4,6 +4,7 @@
     "slug": "Sologo",
     "version": "1.0.0",
     "orientation": "portrait",
+    "owner": "gitcuber369",
     "newArchEnabled": true,
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
