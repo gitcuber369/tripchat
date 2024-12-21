@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ScrollView,
 } from "react-native";
 import { WithLocalSvg } from "react-native-svg/css";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -113,21 +114,22 @@ export default function Login({ navigation }: Props) {
           }
 
           const userId = sessionData.user.id; // Get the authenticated user's ID
-          console.log("===========sessionData>>>>>s", sessionData);
+          console.log("===========sessionData>>>>>", sessionData);
+
+          // Extract user metadata
+          const { email, full_name, picture } = sessionData.user.user_metadata;
 
           // Check if user already exists in the `users` table
           const { data: existingUser, error: fetchError } = await supabase
             .from("users")
             .select("*")
-            .eq("id", userId)
+            .eq("email", email)
             .single();
 
           if (fetchError) {
             console.log("======fetchError>>>>>", fetchError);
             if (fetchError.code === "PGRST116") {
               // User does not exist; insert user data into Supabase
-              const { email, full_name, picture } =
-                sessionData.user.user_metadata; // Extract additional user data
               const { error: insertError } = await supabase
                 .from("users")
                 .insert({
@@ -141,6 +143,7 @@ export default function Login({ navigation }: Props) {
               if (insertError) {
                 throw insertError;
               }
+
               setModalVisible(true);
               setUserData({
                 id: userId,
@@ -155,9 +158,14 @@ export default function Login({ navigation }: Props) {
               throw fetchError;
             }
           } else {
+            // User already exists
             console.log("User already exists:", existingUser);
+
+            // Set user data and redirect to home
             setUser(existingUser);
+            navigation.navigate("Home"); // Replace "Home" with your actual home page route name
           }
+
           console.log("Google Login Successful:", sessionData);
         }
       } else {
@@ -180,8 +188,7 @@ export default function Login({ navigation }: Props) {
             console.error("Google Sign-In error:", error);
         }
       } else {
-        // console.error("An unexpected error occurred:", error);
-        toast.show(error?.message || "something went wrong", {
+        toast.show(error?.message || "Something went wrong", {
           type: "danger",
         });
       }
@@ -245,135 +252,135 @@ export default function Login({ navigation }: Props) {
       <View style={styles.logoView}>
         <WithLocalSvg asset={require("../../../assets/svg/star.svg")} />
       </View>
-      {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-      <Text style={styles.heading}>Log in</Text>
-      <Formik
-        initialValues={{
-          email: "",
-          password: "",
-        }}
-        validationSchema={signinValidationSchema}
-        onSubmit={(values, { resetForm }) => {
-          handleLogin(values, resetForm);
-          // navigation.navigate("Tabs");
-          // toggleModal();
-        }}
-      >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          setFieldValue,
-        }) => (
-          <>
-            <Input
-              placeholder="Email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              label="Email address"
-              value={values.email}
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              error={touched.email && errors.email ? errors.email : undefined}
-              rightIcon={
-                <Ionicons
-                  name="checkmark-circle"
-                  size={24}
-                  color={COLORS.BLACK}
-                />
-              }
-              customStyle={{
-                input: {},
-                container: {
-                  backgroundColor: COLORS.WHITE,
-                  borderWidth: 1,
-                  borderColor: COLORS.GRAY_200,
-                  borderRadius: 10,
-                  height: adjustSize(56),
-                },
-              }}
-            />
-            <Input
-              placeholder="Password"
-              label="Password"
-              value={values.password}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              error={
-                touched.password && errors.password
-                  ? errors.password
-                  : undefined
-              }
-              secureTextEntry={!showPassword}
-              rightIcon={
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  {!showPassword ? (
-                    <Feather name="eye-off" size={20} color={COLORS.GRAY} />
-                  ) : (
-                    <Feather name="eye" size={20} color={COLORS.GRAY} />
-                  )}
-                </TouchableOpacity>
-              }
-              customStyle={{
-                input: {},
-                container: {
-                  backgroundColor: COLORS.WHITE,
-                  borderWidth: 1,
-                  borderColor: COLORS.GRAY_200,
-                  borderRadius: 10,
-                  height: adjustSize(56),
-                },
-              }}
-            />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.heading}>Log in</Text>
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+          }}
+          validationSchema={signinValidationSchema}
+          onSubmit={(values, { resetForm }) => {
+            handleLogin(values, resetForm);
+            // navigation.navigate("Tabs");
+            // toggleModal();
+          }}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+          }) => (
+            <>
+              <Input
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                label="Email address"
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                error={touched.email && errors.email ? errors.email : undefined}
+                rightIcon={
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={24}
+                    color={COLORS.BLACK}
+                  />
+                }
+                customStyle={{
+                  input: {},
+                  container: {
+                    backgroundColor: COLORS.WHITE,
+                    borderWidth: 1,
+                    borderColor: COLORS.GRAY_200,
+                    borderRadius: 10,
+                    height: adjustSize(56),
+                  },
+                }}
+              />
+              <Input
+                placeholder="Password"
+                label="Password"
+                value={values.password}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                error={
+                  touched.password && errors.password
+                    ? errors.password
+                    : undefined
+                }
+                secureTextEntry={!showPassword}
+                rightIcon={
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    {!showPassword ? (
+                      <Feather name="eye-off" size={20} color={COLORS.GRAY} />
+                    ) : (
+                      <Feather name="eye" size={20} color={COLORS.GRAY} />
+                    )}
+                  </TouchableOpacity>
+                }
+                customStyle={{
+                  input: {},
+                  container: {
+                    backgroundColor: COLORS.WHITE,
+                    borderWidth: 1,
+                    borderColor: COLORS.GRAY_200,
+                    borderRadius: 10,
+                    height: adjustSize(56),
+                  },
+                }}
+              />
 
-            <TouchableOpacity
-              style={styles.forgotBtn}
-              onPress={() => navigation.navigate("ForgotPassword")}
-            >
-              <Text style={styles.forgotBtnTxt}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <Button
-              title={"Log in"}
-              loading={loading}
-              onPress={() => handleSubmit()}
-              customStyles={{
-                View: {
-                  marginTop: SIZES.MARGIN_LARGE,
-                  backgroundColor: COLORS.BLACK,
-                  borderRadius: 10,
-                },
-                text: {
-                  fontSize: 18,
-                  // fontFamily: FONTS.SEMI_BOLD,
-                },
-              }}
-            />
-          </>
-        )}
-      </Formik>
+              <TouchableOpacity
+                style={styles.forgotBtn}
+                onPress={() => navigation.navigate("ForgotPassword")}
+              >
+                <Text style={styles.forgotBtnTxt}>Forgot Password?</Text>
+              </TouchableOpacity>
+              <Button
+                title={"Log in"}
+                loading={loading}
+                onPress={() => handleSubmit()}
+                customStyles={{
+                  View: {
+                    marginTop: SIZES.MARGIN_LARGE,
+                    backgroundColor: COLORS.BLACK,
+                    borderRadius: 10,
+                  },
+                  text: {
+                    fontSize: 18,
+                    // fontFamily: FONTS.SEMI_BOLD,
+                  },
+                }}
+              />
+            </>
+          )}
+        </Formik>
 
-      <View style={styles.orSec}>
-        <View style={styles.line} />
-        <Text style={styles.orTxt}>Or Login with</Text>
-        <View style={styles.line} />
-      </View>
-      <View style={styles.socialBtns}>
-        <TouchableOpacity style={styles.socialBtn}>
-          <EvilIcons name="sc-facebook" size={30} color="#3C5A99" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBtn} onPress={() => signIn()}>
-          <WithLocalSvg asset={require("../../../assets/svg/Google.svg")} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBtn}>
-          <AntDesign name="apple1" size={22} color="black" />
-        </TouchableOpacity>
-      </View>
-      {/* </ScrollView> */}
+        <View style={styles.orSec}>
+          <View style={styles.line} />
+          <Text style={styles.orTxt}>Or Login with</Text>
+          <View style={styles.line} />
+        </View>
+        <View style={styles.socialBtns}>
+          <TouchableOpacity style={styles.socialBtn}>
+            <EvilIcons name="sc-facebook" size={30} color="#3C5A99" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialBtn} onPress={() => signIn()}>
+            <WithLocalSvg asset={require("../../../assets/svg/Google.svg")} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialBtn}>
+            <AntDesign name="apple1" size={22} color="black" />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
       <View style={styles.bottomSec}>
         <Text style={styles.txt1}>Don’t have an account?</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>

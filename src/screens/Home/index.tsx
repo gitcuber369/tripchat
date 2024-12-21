@@ -50,7 +50,7 @@ export default function Home({ navigation }: Props) {
             </Text>
           </View>
           <View style={styles.logoSec}>
-            <Text style={styles.logoTxt}>Sologo</Text>
+            <Text style={styles.logoTxt}>Tripchat</Text>
             <View style={styles.logo}>
               <WithLocalSvg
                 asset={require("../../../assets/svg/star.svg")}
