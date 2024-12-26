@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -9,6 +9,7 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useToast } from "react-native-toast-notifications";
@@ -33,6 +34,7 @@ export default function Chats({ navigation }: Props) {
   const [activeTab, setActiveTab] = useState("All");
   const [chats, setChats] = useState<any>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchChatRooms = async () => {
     try {
@@ -82,6 +84,7 @@ export default function Chats({ navigation }: Props) {
       toast.show(err.message || "Something went wrong!", { type: "danger" });
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -137,6 +140,11 @@ export default function Chats({ navigation }: Props) {
       const unsubscribe = subscribeToRealtimeChatRooms(); // Set up realtime updates
       return () => unsubscribe(); // Clean up subscription on unmount
     })();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchChatRooms();
   }, []);
 
   const filterChats = chats.filter((chat) =>
@@ -251,6 +259,9 @@ export default function Chats({ navigation }: Props) {
             )}
           </View>
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Sologo",
-    "slug": "Sologo",
+    "name": "Tripchat",
+    "slug": "Tripchat",
     "version": "1.0.0",
     "orientation": "portrait",
     "owner": "gitcuber369",
@@ -50,7 +50,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "4b26eb65-59a5-47e0-b371-391b5ac59202"
+        "projectId": "80e4564a-a1e7-4f37-830b-4f0b61db88f4"
       }
     }
   }
