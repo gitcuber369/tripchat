@@ -30,7 +30,7 @@ export default function Onboarding2({ navigation }: Props) {
         resizeMode="contain"
       >
         <Image
-          source={require("../../../assets/img/onboarding.png")}
+          source={require("../../../assets/img/onboarding1.jpeg ")}
           style={styles.onboardingImage}
           resizeMode="contain"
         />
