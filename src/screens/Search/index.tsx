@@ -216,7 +216,22 @@ export default function Search({ navigation }: Props) {
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={() => (
             <View style={styles.notFoundContainer}>
-              <Text style={styles.notFoundTxt}>No destination found</Text>
+              <Text style={styles.notFoundTxt}>
+                No destination {search} Is'nt live yet! We're working hard to
+                bring TripChat to more cities.
+              </Text>
+              <Text
+                style={{
+                  marginTop: 20,
+                  color: COLORS.GRAY_500,
+                  fontFamily: FONTS.POPPINS_REGULAR,
+                }}
+              >
+                Want {search} to be added? Let us know!
+              </Text>
+              <View>
+                <Button>Request {search}</Button>
+              </View>
             </View>
           )}
         />
@@ -347,5 +362,7 @@ const styles = StyleSheet.create({
   notFoundTxt: {
     fontFamily: FONTS.POPPINS_REGULAR,
     color: COLORS.GRAY_500,
+    alignContent: "center",
+    textAlign: "center",
   },
 });

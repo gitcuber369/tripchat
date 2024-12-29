@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "owner": "gitcuber369",
     "newArchEnabled": true,
+    "facebookAppId": "1096044018665955",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {

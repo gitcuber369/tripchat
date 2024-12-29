@@ -19,6 +19,10 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import * as Facebook from "expo-auth-session/providers/facebook";
+import * as AuthSession from "expo-auth-session";
+
+import * as WebBrowser from "expo-web-browser";
 import Modal from "react-native-modal";
 import * as Location from "expo-location";
 
@@ -192,6 +196,20 @@ export default function Login({ navigation }: Props) {
           type: "danger",
         });
       }
+    }
+  };
+
+  WebBrowser.maybeCompleteAuthSession();
+
+  const facebookLogin = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "facebook",
+      });
+      if (error) throw error;
+      toast.show("Logged in with Facebook!", { type: "success" });
+    } catch (err: any) {
+      toast.show(err?.message || "Login failed", { type: "danger" });
     }
   };
 
@@ -370,7 +388,10 @@ export default function Login({ navigation }: Props) {
           <View style={styles.line} />
         </View>
         <View style={styles.socialBtns}>
-          <TouchableOpacity style={styles.socialBtn}>
+          <TouchableOpacity
+            style={styles.socialBtn}
+            onPress={() => facebookLogin()}
+          >
             <EvilIcons name="sc-facebook" size={30} color="#3C5A99" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.socialBtn} onPress={() => signIn()}>
